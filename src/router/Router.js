@@ -62,7 +62,7 @@ class Router extends React.Component {
     }
 
     let goBack = (n=1) => {
-      let routes = [ activeRoutes.slice(n,n+1), activeRoutes[0], ...activeRoutes.slice(n+1) ]
+      let routes = [ ...activeRoutes.slice(n,n+1), activeRoutes[0], ...activeRoutes.slice(n+1) ]
       this.setState({activeRoutes: routes})
     }
 
