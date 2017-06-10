@@ -5,19 +5,19 @@ import RouterState from './RouterState'
 
 type Route = {
   id: string,
-  component: React$Element
+  component: React$Element<*>
 }
 
 type Props = {
-  renderRoute: (Route, Object) => React$Element,
-  defaultRoute: Array<Route>
+  renderRoute: (Route, Object) => React$Element<*>,
+  defaultRoutes: Array<Route>
 }
 
 type State = {
   activeRoutes: Array<Route>
 }
 
-class Router extends Component<Props, State> {
+class Router extends React.Component {
   props: Props
   state: State
 
@@ -27,25 +27,46 @@ class Router extends Component<Props, State> {
 
   render(){
     let { defaultRoutes, renderRoute } =  this.props
-    let getActiveRoute = routeParams => {
-      let routeKeys = defaultRoutes.map((obj) => obj.id)
-      let newRoute = defaultRoutes[routeKeys.indexOf(routeParams.id)]
+    let { activeRoutes } = this.state
 
-      return routeParams.otherProps ?
-        { ...newRoute, otherProps: routeParams.otherProps }
+    let getActiveRoute = routeParams => {
+      let { id, otherProps } = routeParams
+      let routeIndex = defaultRoutes.findIndex((obj) => obj.id === id)
+
+      //do nothing if route not found
+      if(routeIndex === -1) return
+      let newRoute = defaultRoutes[routeIndex]
+
+      return otherProps ?
+        { ...newRoute, otherProps }
         : newRoute
     }
 
-    let onNavigate = route => {
-      this.setState({activeRoutes: [getActiveRoute(route), ...this.state.activeRoutes]})
+    let goTo = route => {
+      let active = getActiveRoute(route)
+      let routeIndex = activeRoutes.findIndex(obj => obj.id === route.id)
+
+      let setRoute = () => {
+        //avoid saving duplicate routes
+        if(!active)
+          return activeRoutes
+
+        if(routeIndex !== -1){
+          return [active, ...activeRoutes.slice(0, routeIndex), ...activeRoutes.slice(routeIndex + 1)]
+        }
+        return [active, ...activeRoutes]
+      }
+
+
+      this.setState({activeRoutes: setRoute()})
     }
 
-    let onBack = () => {
-      let [ active, previousActive, inactiveRoutes ] = this.state.activeRoutes
-      this.setState({activeRoutes: [previousActive, active, ...inactiveRoutes]})
+    let goBack = (n=1) => {
+      let routes = [ activeRoutes.slice(n,n+1), activeRoutes[0], ...activeRoutes.slice(n+1) ]
+      this.setState({activeRoutes: routes})
     }
 
-    let navProps = { onNavigate, onBack }
+    let navProps = { goTo, goBack }
 
     return (
       <RouterState

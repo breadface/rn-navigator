@@ -4,9 +4,9 @@
   "description": "A basic react native navigation library with pluggable animations",
   "main": "index.js",
   "scripts": {
-    "build": "babel src -d build",
-    "prepublish": "npm run build",
-    "flow": "node_modules/.bin/flow",
+    "build": "flow-remove-types src -d lib && babel lib -d build",
+    "prepublish": "yarn run build",
+    "flow": "node_modules/.bin/flow src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": "git@github.com:breadface/rn-navigator.git",
@@ -26,6 +26,7 @@
     "babel-preset-flow": "^6.23.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-1": "^6.24.1",
-    "flow-bin": "^0.46.0"
+    "flow-bin": "^0.46.0",
+    "flow-remove-types": "^1.2.1"
   }
 }
