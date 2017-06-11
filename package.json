@@ -17,6 +17,7 @@
   "homepage": "https://github.com/breadface/rn-navigator#readme",
   "license": "MIT",
   "dependencies": {
+    "bluebird": "^3.5.0",
     "react": "^15.5.4",
     "react-native": "^0.44.0"
   },
